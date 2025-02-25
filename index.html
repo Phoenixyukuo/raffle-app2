@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>抽獎活動</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+        }
+        .container {
+            margin: 50px auto;
+            width: 80%;
+            max-width: 600px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            color: #333;
+        }
+        .input-area {
+            margin-bottom: 20px;
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #28a745;
+            color: white;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .result {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #ffc107;
+            border-radius: 10px;
+            display: none;
+        }
+        .fade-in {
+            animation: fadeIn 1s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>抽獎活動</h2>
+        <div class="input-area">
+            <label>請輸入 20 位參賽者姓名 (每行一位)</label>
+            <textarea id="names" placeholder="輸入姓名...">A\nB\nC\nD\nE\nF\nG\nH\nI\nJ\nK\nL\nM\nN\nO\nP\nQ\nR\nS\nT</textarea>
+        </div>
+        <div class="input-area">
+            <label>請輸入 10 個獎項及 3 個加碼獎 (每行一個)</label>
+            <textarea id="prizes" placeholder="輸入獎項...">頭獎\n二獎\n三獎\n四獎\n五獎\n六獎\n七獎\n八獎\n九獎\n十獎\n加碼獎1\n加碼獎2\n加碼獎3</textarea>
+        </div>
+        <button onclick="drawNextPrize()">抽取下一個獎項</button>
+        <div class="result" id="winner"></div>
+    </div>
+
+    <script>
+        let names = [];
+        let prizes = [];
+        let winners = [];
+        let currentPrizeIndex = 0;
+        
+        function drawNextPrize() {
+            if (names.length === 0 || prizes.length === 0) {
+                let namesText = document.getElementById('names').value.trim();
+                names = namesText.split('\n').map(name => name.trim()).filter(name => name !== "");
+                
+                let prizesText = document.getElementById('prizes').value.trim();
+                prizes = prizesText.split('\n').map(prize => prize.trim()).filter(prize => prize !== "");
+                
+                if (names.length !== 20) {
+                    alert("請輸入剛好 20 位參賽者！");
+                    names = [];
+                    return;
+                }
+                if (prizes.length !== 13) {
+                    alert("請輸入剛好 13 個獎項！");
+                    prizes = [];
+                    return;
+                }
+            }
+            
+            if (currentPrizeIndex >= prizes.length) {
+                alert("所有獎項已抽取完畢！");
+                return;
+            }
+            
+            let availableNames = names.filter(name => !winners.includes(name));
+            if (availableNames.length === 0) {
+                alert("沒有剩餘的參賽者！");
+                return;
+            }
+            
+            let randomIndex = Math.floor(Math.random() * availableNames.length);
+            let winner = availableNames[randomIndex];
+            winners.push(winner);
+            
+            let resultDiv = document.getElementById('winner');
+            resultDiv.innerHTML = `<p>${prizes[currentPrizeIndex]}: ${winner}</p>`;
+            resultDiv.style.display = 'block';
+            resultDiv.classList.add('fade-in');
+            
+            currentPrizeIndex++;
+        }
+    </script>
+</body>
+</html>
